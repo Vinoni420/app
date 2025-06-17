@@ -1,133 +1,167 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: 'https://ofhowauzjobeglixwwur.supabase.co',
+    anonKey: '***REMOVED***',
+  );
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Login/Signup Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const AuthPage(),
+      title: 'Flutter Supabase Auth',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: AuthPage(),
     );
   }
 }
 
 class AuthPage extends StatefulWidget {
-  const AuthPage({super.key});
-
   @override
   State<AuthPage> createState() => _AuthPageState();
 }
 
 class _AuthPageState extends State<AuthPage> {
-  bool isLogin = true;
-  final _formKey = GlobalKey<FormState>();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
 
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController nameController = TextEditingController();
+  bool _isLogin = true;
+  bool _loading = false;
 
-  void toggleForm() {
-    setState(() {
-      isLogin = !isLogin;
-    });
-  }
+  final supabase = Supabase.instance.client;
 
-  void submit() {
-    if (_formKey.currentState!.validate()) {
-      final email = emailController.text.trim();
-      final password = passwordController.text.trim();
-      final name = nameController.text.trim();
+  // --- START: CORRECTED METHOD ---
+  Future<void> _authenticate() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
 
-      if (isLogin) {
-        print('Login: $email - $password');
+    if (email.isEmpty || password.isEmpty) {
+      _showMessage('Please enter email and password.');
+      return;
+    }
+
+    setState(() => _loading = true);
+
+    try {
+      if (_isLogin) {
+        // Use the new method: signInWithPassword
+        await supabase.auth.signInWithPassword(
+          email: email,
+          password: password,
+        );
       } else {
-        print('Signup: $name - $email - $password');
+        // Use the new method: signUp with named parameters
+        await supabase.auth.signUp(
+          email: email,
+          password: password,
+        );
+      }
+
+      if (mounted) {
+        _showMessage(_isLogin ? 'Login successful!' : 'Signup successful! Please check your email.');
+        // TODO: Navigate to your app's home page
+      }
+    } on AuthException catch (e) {
+      _showMessage('Authentication Failed: ${e.message}');
+    } catch (e) {
+      _showMessage('An unexpected error occurred: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
       }
     }
+  }
+  // --- END: CORRECTED METHOD ---
+
+
+  // --- START: CORRECTED METHOD ---
+  Future<void> _signInWithGoogle() async {
+    setState(() => _loading = true);
+
+    try {
+      // Use the new method: signInWithOAuth
+      await supabase.auth.signInWithOAuth(OAuthProvider.google);
+
+    } on AuthException catch (e) {
+      _showMessage('Google Sign-In Failed: ${e.message}');
+    } catch (e) {
+      _showMessage('An unexpected error occurred: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
+      }
+    }
+  }
+  // --- END: CORRECTED METHOD ---
+
+  void _showMessage(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
   @override
   Widget build(BuildContext context) {
+    // The build method remains unchanged.
     return Scaffold(
-      backgroundColor: Colors.grey[100],
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  isLogin ? 'Welcome Back!' : 'Create Account',
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 30),
-                Form(
-                  key: _formKey,
-                  child: Column(
+      appBar: AppBar(title: Text(_isLogin ? 'Login' : 'Sign Up')),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(labelText: 'Email'),
+              keyboardType: TextInputType.emailAddress,
+              autofillHints: [AutofillHints.email],
+            ),
+            SizedBox(height: 12),
+            TextField(
+              controller: _passwordController,
+              decoration: InputDecoration(labelText: 'Password'),
+              obscureText: true,
+              autofillHints: [AutofillHints.password],
+            ),
+            SizedBox(height: 24),
+            _loading
+                ? CircularProgressIndicator()
+                : Column(
                     children: [
-                      if (!isLogin)
-                        TextFormField(
-                          controller: nameController,
-                          decoration: const InputDecoration(
-                            labelText: 'Name',
-                            border: OutlineInputBorder(),
-                          ),
-                          validator: (value) =>
-                              value!.isEmpty ? 'Enter your name' : null,
-                        ),
-                      if (!isLogin) const SizedBox(height: 15),
-                      TextFormField(
-                        controller: emailController,
-                        decoration: const InputDecoration(
-                          labelText: 'Email',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) => value!.contains('@')
-                            ? null
-                            : 'Enter a valid email',
-                      ),
-                      const SizedBox(height: 15),
-                      TextFormField(
-                        controller: passwordController,
-                        obscureText: true,
-                        decoration: const InputDecoration(
-                          labelText: 'Password',
-                          border: OutlineInputBorder(),
-                        ),
-                        validator: (value) => value!.length < 6
-                            ? 'Password too short'
-                            : null,
-                      ),
-                      const SizedBox(height: 25),
                       ElevatedButton(
-                        onPressed: submit,
-                        child: Text(isLogin ? 'Login' : 'Sign Up'),
+                        onPressed: _authenticate,
+                        child: Text(_isLogin ? 'Login' : 'Sign Up'),
                       ),
+                      SizedBox(height: 12),
+                      ElevatedButton.icon(
+                        icon: Image.asset( // Use Image.asset
+                          'assets/images/google_logo.png', // The path to your local file
+                          height: 18,
+                          width: 18,
+                        ),
+                        label: Text('Sign in with Google'),
+                        onPressed: _signInWithGoogle,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(height: 12),
                       TextButton(
-                        onPressed: toggleForm,
-                        child: Text(isLogin
-                            ? 'No account? Sign up here'
-                            : 'Already have an account? Log in'),
+                        onPressed: () => setState(() => _isLogin = !_isLogin),
+                        child: Text(_isLogin
+                            ? "Don't have an account? Sign Up"
+                            : "Already have an account? Login"),
                       ),
                     ],
                   ),
-                )
-              ],
-            ),
-          ),
+          ],
         ),
       ),
     );
