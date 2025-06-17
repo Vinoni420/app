@@ -1,94 +1,134 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const TodoApp());
+  runApp(const MyApp());
 }
 
-class TodoApp extends StatelessWidget {
-  const TodoApp({super.key});
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Simple To-Do',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: const TodoHomePage(),
+      title: 'Login/Signup Demo',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: const AuthPage(),
     );
   }
 }
 
-class TodoHomePage extends StatefulWidget {
-  const TodoHomePage({super.key});
+class AuthPage extends StatefulWidget {
+  const AuthPage({super.key});
 
   @override
-  State<TodoHomePage> createState() => _TodoHomePageState();
+  State<AuthPage> createState() => _AuthPageState();
 }
 
-class _TodoHomePageState extends State<TodoHomePage> {
-  final List<String> _tasks = [];
+class _AuthPageState extends State<AuthPage> {
+  bool isLogin = true;
+  final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
 
-  void _addTask() {
-    final text = _controller.text;
-    if (text.isNotEmpty) {
-      setState(() {
-        _tasks.add(text);
-        _controller.clear();
-      });
-    }
+  void toggleForm() {
+    setState(() {
+      isLogin = !isLogin;
+    });
   }
 
-  void _removeTask(int index) {
-    setState(() {
-      _tasks.removeAt(index);
-    });
+  void submit() {
+    if (_formKey.currentState!.validate()) {
+      final email = emailController.text.trim();
+      final password = passwordController.text.trim();
+      final name = nameController.text.trim();
+
+      if (isLogin) {
+        print('Login: $email - $password');
+      } else {
+        print('Signup: $name - $email - $password');
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Simple To-Do App'),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
+      backgroundColor: Colors.grey[100],
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      labelText: 'Enter a new task',
-                    ),
-                    onSubmitted: (_) => _addTask(),
+                Text(
+                  isLogin ? 'Welcome Back!' : 'Create Account',
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.add),
-                  onPressed: _addTask,
-                ),
+                const SizedBox(height: 30),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      if (!isLogin)
+                        TextFormField(
+                          controller: nameController,
+                          decoration: const InputDecoration(
+                            labelText: 'Name',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) =>
+                              value!.isEmpty ? 'Enter your name' : null,
+                        ),
+                      if (!isLogin) const SizedBox(height: 15),
+                      TextFormField(
+                        controller: emailController,
+                        decoration: const InputDecoration(
+                          labelText: 'Email',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) => value!.contains('@')
+                            ? null
+                            : 'Enter a valid email',
+                      ),
+                      const SizedBox(height: 15),
+                      TextFormField(
+                        controller: passwordController,
+                        obscureText: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Password',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) => value!.length < 6
+                            ? 'Password too short'
+                            : null,
+                      ),
+                      const SizedBox(height: 25),
+                      ElevatedButton(
+                        onPressed: submit,
+                        child: Text(isLogin ? 'Login' : 'Sign Up'),
+                      ),
+                      TextButton(
+                        onPressed: toggleForm,
+                        child: Text(isLogin
+                            ? 'No account? Sign up here'
+                            : 'Already have an account? Log in'),
+                      ),
+                    ],
+                  ),
+                )
               ],
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _tasks.length,
-              itemBuilder: (context, index) {
-                final task = _tasks[index];
-                return ListTile(
-                  title: Text(task),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () => _removeTask(index),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
