@@ -141,7 +141,7 @@ class _AuthPageState extends State<AuthPage> {
                       SizedBox(height: 12),
                       ElevatedButton.icon(
                         icon: Image.asset( // Use Image.asset
-                          'assets/images/google_logo.png', // The path to your local file
+                          'assets/images/google.png', // The path to your local file
                           height: 18,
                           width: 18,
                         ),
