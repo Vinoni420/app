@@ -1,13 +1,19 @@
 // lib/profile_screen.dart
+
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart'; // <-- 1. ADD THIS IMPORT
+import 'main.dart'; // <-- 2. ADD THIS IMPORT TO GET THE 'supabase' CLIENT
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    // --- 3. ADD THIS LOGIC TO GET THE USER'S LOGIN PROVIDER ---
+    final user = supabase.auth.currentUser;
+    final provider = user?.appMetadata['provider'];
+
     return Scaffold(
-      // As noted, the back arrow is removed as we are in the main nav
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -16,8 +22,39 @@ class ProfileScreen extends StatelessWidget {
           'Profile',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
+        // --- 4. ADD THE 'actions' PROPERTY WITH OUR LOGOUT BUTTON ---
+        actions: [
+          IconButton(
+            onPressed: () async {
+              // This is the safe and "smart" logout logic we perfected.
+              try {
+                // If the user signed in with Google, sign out from Google.
+                if (provider == 'google') {
+                  await GoogleSignIn().signOut();
+                }
+
+                // Always sign out from Supabase.
+                await supabase.auth.signOut();
+                
+              } catch (error) {
+                // Handle potential errors, just in case.
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Error during sign out: ${error.toString()}'),
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                  ));
+                }
+              }
+              // The AuthGate will handle navigating back to the LoginPage.
+            },
+            icon: const Icon(Icons.logout, color: Colors.black), // Match icon color
+            tooltip: 'Logout',
+          )
+        ],
+        // --- END OF NEW CODE ---
       ),
       body: SingleChildScrollView(
+        // The rest of your beautiful ProfileScreen code remains exactly the same.
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
@@ -54,6 +91,9 @@ class ProfileScreen extends StatelessWidget {
       ),
     );
   }
+
+  // All your existing _build... helper methods below this line are perfect and
+  // do not need to be changed at all.
 
   Widget _buildProfileHeader() {
     return const Center(
@@ -137,14 +177,13 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildReviewsSection() {
     return Row(
       children: [
-        // Left side: Overall Rating
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text('4.9', style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
             Row(
               children: List.generate(5, (index) => Icon(
-                index < 4 ? Icons.star : Icons.star_half, // 4.5 stars
+                index < 4 ? Icons.star : Icons.star_half,
                 color: Colors.amber,
                 size: 18,
               )),
@@ -154,7 +193,6 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(width: 20),
-        // Right side: Rating bars
         Expanded(
           child: Column(
             children: [
@@ -216,10 +254,7 @@ class ProfileScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 12),
-        Text(
-          reviewText,
-          style: TextStyle(color: Colors.grey[800], height: 1.4),
-        ),
+        Text(reviewText, style: TextStyle(color: Colors.grey[800], height: 1.4)),
         const SizedBox(height: 12),
         Row(
           children: [
