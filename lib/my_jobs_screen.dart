@@ -1,4 +1,3 @@
-// lib/my_jobs_screen.dart
 import 'package:flutter/material.dart';
 
 class MyJobsScreen extends StatefulWidget {
@@ -12,23 +11,21 @@ class _MyJobsScreenState extends State<MyJobsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  // --- MOCK DATA ---
+  // random data
   final List<Map<String, String>> activeJobs = [
     {'title': 'Remote Project Management', 'type': 'Project Manager', 'image': 'assets/images/job1.png'},
     {'title': 'Logo Design for Startup', 'type': 'Graphic Designer', 'image': 'assets/images/job2.png'},
     {'title': 'Blog Post Series', 'type': 'Content Writer', 'image': 'assets/images/job3.png'},
   ];
-  // In a real app, you would have separate lists for completed and draft jobs
+
   final List<Map<String, String>> completedJobs = [
     {'title': 'E-commerce Site Audit', 'type': 'SEO Specialist', 'image': 'assets/images/job4.png'},
   ];
-  // --- END MOCK DATA ---
 
 
   @override
   void initState() {
     super.initState();
-    // Create a TabController with 3 tabs
     _tabController = TabController(length: 3, vsync: this);
   }
 
@@ -44,7 +41,7 @@ class _MyJobsScreenState extends State<MyJobsScreen>
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        centerTitle: false, // Align title to the left
+        centerTitle: false, 
         title: const Text(
           'My Jobs',
           style: TextStyle(
@@ -53,14 +50,14 @@ class _MyJobsScreenState extends State<MyJobsScreen>
         actions: [
           IconButton(
             icon: const Icon(Icons.add, color: Colors.black, size: 30),
-            onPressed: () { /* TODO: Implement create new job action */ },
+            onPressed: () {},
           ),
         ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.black, // Color of the underline
-          labelColor: Colors.black, // Color of the selected tab text
-          unselectedLabelColor: Colors.grey, // Color of the unselected tabs
+          indicatorColor: Colors.black,
+          labelColor: Colors.black,
+          unselectedLabelColor: Colors.grey, 
           tabs: const [
             Tab(text: 'Active'),
             Tab(text: 'Completed'),
@@ -71,23 +68,19 @@ class _MyJobsScreenState extends State<MyJobsScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          // Content for Active Tab
           _buildJobList(activeJobs),
-          // Content for Completed Tab
           _buildJobList(completedJobs),
-          // Content for Drafts Tab
           const Center(child: Text('No drafts yet.')),
         ],
       ),
     );
   }
 
-  // A reusable widget to build the list of jobs
   Widget _buildJobList(List<Map<String, String>> jobs) {
     if (jobs.isEmpty) {
       return const Center(child: Text('No jobs in this category.'));
     }
-    // Use ListView.separated to easily add dividers
+
     return ListView.separated(
       padding: const EdgeInsets.all(16.0),
       itemCount: jobs.length,
@@ -103,7 +96,6 @@ class _MyJobsScreenState extends State<MyJobsScreen>
               width: 60,
               height: 60,
               fit: BoxFit.cover,
-              // Add a fallback in case the image doesn't load
               errorBuilder: (context, error, stackTrace) {
                 return Container(width: 60, height: 60, color: Colors.grey[200]);
               },
@@ -111,7 +103,7 @@ class _MyJobsScreenState extends State<MyJobsScreen>
           ),
           title: Text(job['title']!, style: const TextStyle(fontWeight: FontWeight.bold)),
           subtitle: Text(job['type']!, style: TextStyle(color: Colors.grey[600])),
-          onTap: () { /* TODO: Navigate to job details page */ },
+          onTap: () {},
         );
       },
     );

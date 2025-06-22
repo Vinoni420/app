@@ -1,15 +1,14 @@
 // lib/profile_screen.dart
 
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart'; // <-- 1. ADD THIS IMPORT
-import 'main.dart'; // <-- 2. ADD THIS IMPORT TO GET THE 'supabase' CLIENT
+import 'package:google_sign_in/google_sign_in.dart'; 
+import 'main.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // --- 3. ADD THIS LOGIC TO GET THE USER'S LOGIN PROVIDER ---
     final user = supabase.auth.currentUser;
     final provider = user?.appMetadata['provider'];
 
@@ -22,22 +21,16 @@ class ProfileScreen extends StatelessWidget {
           'Profile',
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
-        // --- 4. ADD THE 'actions' PROPERTY WITH OUR LOGOUT BUTTON ---
         actions: [
           IconButton(
             onPressed: () async {
-              // This is the safe and "smart" logout logic we perfected.
               try {
-                // If the user signed in with Google, sign out from Google.
                 if (provider == 'google') {
                   await GoogleSignIn().signOut();
                 }
-
-                // Always sign out from Supabase.
                 await supabase.auth.signOut();
                 
               } catch (error) {
-                // Handle potential errors, just in case.
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('Error during sign out: ${error.toString()}'),
@@ -45,16 +38,13 @@ class ProfileScreen extends StatelessWidget {
                   ));
                 }
               }
-              // The AuthGate will handle navigating back to the LoginPage.
             },
-            icon: const Icon(Icons.logout, color: Colors.black), // Match icon color
+            icon: const Icon(Icons.logout, color: Colors.black),
             tooltip: 'Logout',
           )
         ],
-        // --- END OF NEW CODE ---
       ),
       body: SingleChildScrollView(
-        // The rest of your beautiful ProfileScreen code remains exactly the same.
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: Column(
@@ -92,8 +82,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  // All your existing _build... helper methods below this line are perfect and
-  // do not need to be changed at all.
+// random data
 
   Widget _buildProfileHeader() {
     return const Center(

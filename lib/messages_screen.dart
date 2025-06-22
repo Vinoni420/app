@@ -1,11 +1,11 @@
-// lib/messages_screen.dart
 import 'package:app/chat_screen.dart';
 import 'package:flutter/material.dart';
 
 class MessagesScreen extends StatelessWidget {
   const MessagesScreen({Key? key}) : super(key: key);
 
-  // --- MOCK DATA ---
+  // random data
+
   final List<Map<String, String>> messages = const [
     {'name': 'Sophia Carter', 'message': 'Sure, I\'ll send you the files by EOD.', 'avatar': 'assets/images/avatar_sophia.png'},
     {'name': 'Ethan Bennett', 'message': 'Thanks for the quick turnaround!', 'avatar': 'assets/images/avatar_ethan.png'},
@@ -14,7 +14,6 @@ class MessagesScreen extends StatelessWidget {
     {'name': 'Ava Moore', 'message': 'I\'ve reviewed the proposal and it\'s perfect.', 'avatar': 'assets/images/avatar_ava.png'},
     {'name': 'Noah Parker', 'message': 'Can we discuss the next steps?', 'avatar': 'assets/images/avatar_noah.png'},
   ];
-  // --- END MOCK DATA ---
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +29,7 @@ class MessagesScreen extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_outlined, color: Colors.black),
-            onPressed: () { /* TODO: Implement compose new message action */ },
+            onPressed: () {},
           ),
         ],
       ),
@@ -42,7 +41,7 @@ class MessagesScreen extends StatelessWidget {
             _buildSearchBar(),
             const SizedBox(height: 20),
             Expanded(
-              child: _buildMessagesList(context), // Pass context here
+              child: _buildMessagesList(context),
             ),
           ],
         ),
@@ -58,7 +57,7 @@ class MessagesScreen extends StatelessWidget {
         filled: true,
         fillColor: Colors.grey[200],
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30.0), // Large radius for pill shape
+          borderRadius: BorderRadius.circular(30.0),
           borderSide: BorderSide.none,
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
@@ -66,7 +65,7 @@ class MessagesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildMessagesList(BuildContext context) { // Accept context here
+  Widget _buildMessagesList(BuildContext context) {
     return ListView.separated(
       itemCount: messages.length,
       separatorBuilder: (context, index) => const Divider(height: 24, thickness: 1, indent: 70),
@@ -86,7 +85,6 @@ class MessagesScreen extends StatelessWidget {
             style: TextStyle(color: Colors.grey[600]),
           ),
           onTap: () {
-            // Navigate to the ChatScreen when a conversation is tapped
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ChatScreen()),

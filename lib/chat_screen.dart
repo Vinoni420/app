@@ -1,4 +1,3 @@
-// lib/chat_screen.dart
 import 'package:flutter/material.dart';
 
 class ChatScreen extends StatelessWidget {
@@ -11,12 +10,9 @@ class ChatScreen extends StatelessWidget {
       appBar: _buildAppBar(context),
       body: Column(
         children: [
-          // This Expanded widget creates the empty space for the conversation.
           Expanded(
             child: Container(),
           ),
-          
-          // The message input bar at the bottom.
           _buildMessageComposer(context),
         ],
       ),
@@ -37,7 +33,7 @@ class ChatScreen extends StatelessWidget {
       actions: [
         IconButton(
           icon: const Icon(Icons.videocam_outlined, color: Colors.black),
-          onPressed: () { /* TODO: Implement video call */ },
+          onPressed: () {},
         ),
       ],
     );

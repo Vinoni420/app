@@ -1,10 +1,15 @@
-// lib/main_screen.dart
 import 'package:app/home_screen.dart';
 import 'package:app/messages_screen.dart';
 import 'package:app/my_jobs_screen.dart';
 import 'package:app/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
+class NavItem {
+  final String label;
+  final String assetName; 
+  const NavItem({required this.label, required this.assetName});
+}
 
 class MainScreen extends StatefulWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -16,12 +21,18 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _selectedPageIndex = 0;
 
-  // The list of all your main pages
   final List<Widget> _pages = [
     const HomeScreen(),
     const MyJobsScreen(),
     const MessagesScreen(),
     const ProfileScreen(),
+  ];
+
+  final List<NavItem> _navItems = const [
+    NavItem(label: 'Home', assetName: 'home'),
+    NavItem(label: 'My Jobs', assetName: 'my_jobs'),
+    NavItem(label: 'Messages', assetName: 'messages'),
+    NavItem(label: 'Profile', assetName: 'profile'),
   ];
 
   void _onItemTapped(int index) {
@@ -37,77 +48,35 @@ class _MainScreenState extends State<MainScreen> {
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
-  
-  // In lib/main_screen.dart
 
-Widget _buildBottomNavigationBar() {
-  const String assetPath = 'assets/icons/';
-  // Define a single, constant size for all icons. 24.0 is a great standard size.
-  const double iconSize = 24.0;
+  Widget _buildBottomNavigationBar() {
+    const String assetPath = 'assets/icons/';
+    const double iconSize = 24.0;
 
-  return BottomNavigationBar(
-    currentIndex: _selectedPageIndex,
-    onTap: _onItemTapped,
-    type: BottomNavigationBarType.fixed,
-    backgroundColor: Colors.white,
-    selectedItemColor: Colors.black,
-    unselectedItemColor: Colors.grey[600],
-    selectedFontSize: 12,
-    unselectedFontSize: 12, // Keeping font sizes the same also helps prevent shifts
-    items: [
-      BottomNavigationBarItem(
-        label: 'Home',
-        icon: SvgPicture.asset(
-          '${assetPath}home.svg',
-          width: iconSize,  // <-- ADD THIS
-          height: iconSize, // <-- ADD THIS
-        ),
-        activeIcon: SvgPicture.asset(
-          '${assetPath}home_dark.svg',
-          width: iconSize,  // <-- ADD THIS
-          height: iconSize, // <-- ADD THIS
-        ),
-      ),
-      BottomNavigationBarItem(
-        label: 'My Jobs',
-        icon: SvgPicture.asset(
-          '${assetPath}my_jobs.svg',
-          width: iconSize,  // <-- ADD THIS
-          height: iconSize, // <-- ADD THIS
-        ),
-        activeIcon: SvgPicture.asset(
-          '${assetPath}my_jobs_dark.svg',
-          width: iconSize,  // <-- ADD THIS
-          height: iconSize, // <-- ADD THIS
-        ),
-      ),
-      BottomNavigationBarItem(
-        label: 'Messages',
-        icon: SvgPicture.asset(
-          '${assetPath}messages.svg',
-          width: iconSize,  // <-- ADD THIS
-          height: iconSize, // <-- ADD THIS
-        ),
-        activeIcon: SvgPicture.asset(
-          '${assetPath}messages_dark.svg',
-          width: iconSize,  // <-- ADD THIS
-          height: iconSize, // <-- ADD THIS
-        ),
-      ),
-      BottomNavigationBarItem(
-        label: 'Profile',
-        icon: SvgPicture.asset(
-          '${assetPath}profile.svg',
-          width: iconSize,  // <-- ADD THIS
-          height: iconSize, // <-- ADD THIS
-        ),
-        activeIcon: SvgPicture.asset(
-          '${assetPath}profile_dark.svg',
-          width: iconSize,  // <-- ADD THIS
-          height: iconSize, // <-- ADD THIS
-        ),
-      ),
-    ],
-  );
-}
+    return BottomNavigationBar(
+      currentIndex: _selectedPageIndex,
+      onTap: _onItemTapped,
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.white,
+      selectedItemColor: Colors.black,
+      unselectedItemColor: Colors.grey[600],
+      selectedFontSize: 12,
+      unselectedFontSize: 12,
+      items: _navItems.map((item) {
+        return BottomNavigationBarItem(
+          label: item.label,
+          icon: SvgPicture.asset(
+            '$assetPath${item.assetName}.svg',
+            width: iconSize,
+            height: iconSize,
+          ),
+          activeIcon: SvgPicture.asset(
+            '$assetPath${item.assetName}_dark.svg',
+            width: iconSize,
+            height: iconSize,
+          ),
+        );
+      }).toList(),
+    );
+  }
 }

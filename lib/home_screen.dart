@@ -1,11 +1,8 @@
-// lib/home_screen.dart
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
-
-  // --- MOCK DATA ---
-  // In a real app, this would come from an API or a state management solution
+// random data for testing needs to be connected to date base
   final List<Map<String, String>> featuredFreelancers = const [
     {'name': 'Sarah, Designer', 'role': 'UI/UX Designer', 'image': 'assets/images/avatar_sarah.png'},
     {'name': 'Mark, Developer', 'role': 'Web Developer', 'image': 'assets/images/avatar_mark.png'},
@@ -18,7 +15,6 @@ class HomeScreen extends StatelessWidget {
     {'name': 'Writing', 'image': 'assets/images/category_writing.png'},
     {'name': 'Marketing', 'image': 'assets/images/category_marketing.png'},
   ];
-  // --- END MOCK DATA ---
 
   @override
   Widget build(BuildContext context) {
@@ -28,11 +24,10 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // WIDGET BUILDER METHODS
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      elevation: 0, // Removes the shadow
+      elevation: 0,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       centerTitle: true,
       title: const Text(
@@ -42,7 +37,7 @@ class HomeScreen extends StatelessWidget {
       actions: [
         IconButton(
           icon: const Icon(Icons.list, color: Colors.black),
-          onPressed: () { /* TODO: Implement filter/menu action */ },
+          onPressed: () {},
         ),
       ],
     );
@@ -81,7 +76,7 @@ class HomeScreen extends StatelessWidget {
         fillColor: Colors.grey[200],
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12.0),
-          borderSide: BorderSide.none, // No border
+          borderSide: BorderSide.none,
         ),
       ),
     );
@@ -100,21 +95,21 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildFeaturedFreelancersList() {
     return SizedBox(
-      height: 160, // Give the ListView a fixed height
+      height: 160,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: featuredFreelancers.length,
         itemBuilder: (context, index) {
           final freelancer = featuredFreelancers[index];
           return Container(
-            width: 120, // Give each item a fixed width
+            width: 120, 
             margin: const EdgeInsets.only(right: 15),
             child: Column(
               children: [
                 CircleAvatar(
                   radius: 45,
                   backgroundImage: AssetImage(freelancer['image']!),
-                  backgroundColor: Colors.grey[300], // Fallback color
+                  backgroundColor: Colors.grey[300], 
                 ),
                 const SizedBox(height: 10),
                 Text(
@@ -141,14 +136,14 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildPopularCategoriesGrid() {
     return GridView.builder(
-      shrinkWrap: true, // Important to use inside a Column/SingleChildScrollView
-      physics: const NeverScrollableScrollPhysics(), // The outer scroll view will handle scrolling
+      shrinkWrap: true, 
+      physics: const NeverScrollableScrollPhysics(), 
       itemCount: popularCategories.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // 2 columns
+        crossAxisCount: 2, 
         crossAxisSpacing: 15,
         mainAxisSpacing: 15,
-        childAspectRatio: 1 / 1.2, // Adjust aspect ratio (width / height)
+        childAspectRatio: 1 / 1.2, 
       ),
       itemBuilder: (context, index) {
         final category = popularCategories[index];
@@ -163,7 +158,7 @@ class HomeScreen extends StatelessWidget {
                     image: AssetImage(category['image']!),
                     fit: BoxFit.cover,
                   ),
-                   color: Colors.grey[300], // Fallback color
+                   color: Colors.grey[300], 
                 ),
               ),
             ),

@@ -1,4 +1,3 @@
-// lib/login_page.dart
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -52,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
       );
       if (mounted) {
         _showSuccessSnackBar('Login successful!');
-        // In this version, we don't navigate away. The user is logged in.
+
       }
     } on AuthException catch (error) {
       if (mounted) _showErrorSnackBar(error.message);
@@ -116,9 +115,11 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
+// from end
+// handeling invalid emails and passwords
+
   @override
   Widget build(BuildContext context) {
-    // This build method is the same as the one you had before.
     return Scaffold(
       appBar: AppBar(title: Text(_isLogin ? 'Login' : 'Sign Up')),
       body: Center(
