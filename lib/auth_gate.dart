@@ -1,9 +1,5 @@
-// lib/auth_gate.dart
-
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
-// Import the screens it needs to route to
 import 'main_screen.dart'; 
 import 'login_page.dart';
 
@@ -23,12 +19,9 @@ class AuthGate extends StatelessWidget {
 
         final session = snapshot.data!.session;
 
-        // If a session exists, the user is logged in. 
-        // Show the MAIN SCREEN of your freelancer app.
         if (session != null) {
           return const MainScreen();
         } 
-        // Otherwise, show the LoginPage.
         else {
           return const LoginPage();
         }

@@ -1,17 +1,13 @@
-// lib/home_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'main.dart'; // To get the 'supabase' client
+import 'main.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Get the current user from Supabase
     final user = supabase.auth.currentUser;
-    // Check how the user signed in. This will be 'google', 'email', etc.
     final provider = user?.appMetadata['provider'];
 
     return Scaffold(
@@ -22,13 +18,9 @@ class HomePage extends StatelessWidget {
           IconButton(
             onPressed: () async {
               try {
-                // --- THIS IS THE NEW "SMART" LOGIC ---
-                // If the user signed in with Google, sign out from Google first.
                 if (provider == 'google') {
                   await GoogleSignIn().signOut();
                 }
-
-                // Always sign out from Supabase
                 await supabase.auth.signOut();
                 
               } catch (error) {
